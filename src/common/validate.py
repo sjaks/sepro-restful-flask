@@ -1,7 +1,7 @@
 from flask import request
 from werkzeug.exceptions import BadRequest
 
-class ParamValidator():
+class Validator():
     def ValidateParam(self, param):
         def inner(f):
             def validate(self, *args):
@@ -13,3 +13,9 @@ class ParamValidator():
                 return f(self)
             return validate
         return inner
+
+    def ValidateKey(self, key):
+        return
+
+    def ValidateBody(self, body):
+        return
