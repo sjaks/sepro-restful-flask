@@ -4,13 +4,13 @@ from werkzeug.exceptions import BadRequest
 class Validator():
     def ValidateParam(self, param):
         def inner(f):
-            def validate(self, *args):
+            def validate(self, slug = '', *args):
                 args = request.args
 
                 if not param in args:
                     raise BadRequest(f"missing '{param}' in params")
 
-                return f(self)
+                return f(self, slug)
             return validate
         return inner
 

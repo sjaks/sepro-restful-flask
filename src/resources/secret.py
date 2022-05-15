@@ -7,7 +7,7 @@ class Secret(Resource):
     database = Database()
 
     #@validator.ValidateKey()
-    #@validator.ValidateParam('field')
+    @validator.ValidateParam('field')
     def get(self, slug):
         return {"method": "get"}
 
