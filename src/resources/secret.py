@@ -1,26 +1,27 @@
 from flask_restful import Resource
 from common.validate import Validator
-from common.db import Database
+from common.db import db
+from models.secret import Secret
+import uuid
 
-class Secret(Resource):
+class SecretResource(Resource):
     validator = Validator()
-    database = Database()
 
     #@validator.ValidateKey()
-    @validator.ValidateParam('field')
     def get(self, slug):
-        return {"method": "get"}
+        secret = Secret.query.filter_by(id=str(slug)).first()
+        return {'id': str(secret.id), 'slug': secret.slug}
 
     #@validator.ValidateKey()
-    #@validator.ValidateBody()
     def post(self, slug):
-        return {"method": "post"}
-
-    #@validator.ValidateKey()
-    #@validator.ValidateBody()
-    def put(self, slug):
-        return {"method": "put"}
+        id = str(uuid.uuid4())
+        secret = Secret(id=id, slug=slug)
+        db.session.add(secret)
+        db.session.commit()
+        return {'id': id, 'slug': slug}
 
     #@validator.ValidateKey()
     def delete(self, slug):
-        return {"method": "delete"}
+        Secret.query.filter_by(id=str(slug)).delete()
+        db.session.commit()
+        return {'id': str(slug)}

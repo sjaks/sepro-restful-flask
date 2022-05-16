@@ -27,8 +27,6 @@ services:
       - "5432"
     networks:
       - backend
-    volumes:
-      - ./utils/db:/docker-entrypoint-initdb.d/
     environment:
       - POSTGRES_PASSWORD=example
       - POSTGRES_USER=user

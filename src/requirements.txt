@@ -1,3 +1,4 @@
 flask
 flask-sqlalchemy
 flask-restful
+psycopg2-binary
