@@ -24,6 +24,13 @@ The REST API handles secret slugs and thus it is important that authentication i
 The other security consideration is the database and connectivity with it.
 
 ## Testing
+```
+$ curl localhost:5000/secrets/viesti -X POST
+{"id": "dfb180ad-30a6-40f8-b569-2695f937b258", "slug": "viesti"}
+
+curl localhost:5000/secrets/dfb180ad-30a6-40f8-b569-2695f937b258
+{"id": "dfb180ad-30a6-40f8-b569-2695f937b258", "slug": "viesti"}
+```
 1. a
 2. b
 3. c
