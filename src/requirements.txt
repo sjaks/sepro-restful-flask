@@ -1,4 +1,6 @@
 flask
 flask-sqlalchemy
 flask-restful
+Flask-HTTPAuth
 psycopg2-binary
+passlib

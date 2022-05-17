@@ -6,7 +6,7 @@ This project consists of a simple Docker composition. The main part of the progr
 
 The REST API accepts POST requests, which can be used for creating something called secret slugs. The secret slugs are short strings that are saved in a database with an **UUID4** identifier. The slugs can be queried by their ID as well as deleted by it. The endpoints are defined below.
 
-The REST API utilizes **JWT** for authentication. All actions require tokens and unauthorized users should not be able to access or remove other users' slugs.
+The REST API utilizes HTTP Basic Auth for authentication. All actions require user credentials and unauthorized users should not be able to access or remove other users' slugs.
 
 ### Environmental variables
 
@@ -24,26 +24,27 @@ The REST API utilizes **JWT** for authentication. All actions require tokens and
     - HTTP POST (create a new secret slug with given value)
 
 ## Security considerations
-The REST API handles secret slugs and thus it is important that authentication is strong and works.
+The REST API handles secret slugs and thus it is important that authentication is strong and works. HTTP Basic Auth works as a secure username:password authentication method but it relies on the strenght of the password. In this small project it was used due to its simplicity and straight-forward possibility to integrate it into a REST API that should be stateless. The application forces the user to pick a strong password.
 
 UUID4 is used as the identifier format as such IDs are difficult to guess. Incrementing integers would be predictable and an attacker could target certain URLs by guessing some integers.
 
-The other security consideration is the database and connectivity with it. By using SQLAlchemy, database models are enforced and the data is then inherintly validated. Such ORM library also helps in protection against SQL injections since actual SQL query strings are not constructed in this project itself. This leaves minimizes the changes of injection vulnerabilities to be present.
+The other security consideration is the database and connectivity with it. By using SQLAlchemy, database models are enforced and the data is then inherintly validated. Such ORM library also helps in protection against SQL injections since actual SQL query strings are not constructed in this project itself. This leaves minimizes the chances of injection vulnerabilities to be present.
 
 ## Testing
+The creation of secrets can be tested with cURL, for example.
 ```
 $ curl localhost:5000/secrets/viesti -X POST
-{"id": "dfb180ad-30a6-40f8-b569-2695f937b258", "slug": "viesti"}
+{"id": "dfb180ad-30a6-40f8-b569-2695f937b258", "slug": "viesti" -u username:password}
 
-curl localhost:5000/secrets/dfb180ad-30a6-40f8-b569-2695f937b258
-{"id": "dfb180ad-30a6-40f8-b569-2695f937b258", "slug": "viesti"}
+$ curl localhost:5000/secrets/dfb180ad-30a6-40f8-b569-2695f937b258
+{"id": "dfb180ad-30a6-40f8-b569-2695f937b258", "slug": "viesti" -u username:password}
 ```
-1. a
-2. b
-3. c
+Most of the security testing involved pinging the endpoints with cURL and checking that everything works correctly.
 
 ## Current flaws and fixes to them
-Since this application is small, the JWT secret key is stored as an environmental variable. In a larger production-ready application, the secret key should be managed properly, in a safer manner.
+Since this application is a simple experiment, it relies on HTTP basic authentication. It should probably be replaced with something more secure if the program was to be deployed into production. HTTP Basic Auth would suffice if all passwords were strong but public APIs should work with keys that are easily changed and they should limit access to resources. Simple username:password authentication provides access to all resources without any limits.
+
+One very secure way to harden the authentication is using JWT, which was studied for this project but since it doesn't integrate well with Flask-RESTful - but rather with vanilla Flask - it was not used here.
 
 ## Running the program
 Make sure the latest version of the program has been cloned.
