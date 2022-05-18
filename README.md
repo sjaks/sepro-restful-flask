@@ -22,6 +22,8 @@ The REST API utilizes HTTP Basic Auth for authentication. All actions require us
     - HTTP DELETE (delete a secret slug by its id)
 - */secrets/\<slug\>*
     - HTTP POST (create a new secret slug with given value)
+- */users/register*
+    - HTTP POST (created new user with given `username` and `password` in the request body)
 
 ## Security considerations
 The REST API handles secret slugs and thus it is important that authentication is strong and works. HTTP Basic Auth works as a secure username:password authentication method but it relies on the strenght of the password. In this small project it was used due to its simplicity and straight-forward possibility to integrate it into a REST API that should be stateless. The application forces the user to pick a strong password.
@@ -36,13 +38,19 @@ for password hashing at the moment. The library's password verification method i
 used. The hashes are different even if the same password is used. This is because `passlib` uses a random salt for the hashes.
 
 ## Testing
-The creation of secrets can be tested with cURL, for example.
+The creation of secrets and user registration can be tested with cURL, for example.
 ```
-$ curl localhost:5000/secrets/viesti -X POST
-{"id": "dfb180ad-30a6-40f8-b569-2695f937b258", "slug": "viesti" -u username:password}
+HTTP POST User Registration
+$ curl localhost:5000/users/register -X POST -H 'Content-Type: application/json' -d '{"username": "testi", "password": "averystrongandlongpassword"}'
+{"username": "testi"}
 
-$ curl localhost:5000/secrets/dfb180ad-30a6-40f8-b569-2695f937b258
-{"id": "dfb180ad-30a6-40f8-b569-2695f937b258", "slug": "viesti" -u username:password}
+HTTP POST New Slug
+$ curl localhost:5000/secrets/viesti -X POST -H 'Content-Type: application/json' -u testi:averystrongandlongpassword
+{"id": "dfb180ad-30a6-40f8-b569-2695f937b258", "slug": "viesti", "user": "testi"}
+
+HTTP POST Get Slug by ID
+$ curl localhost:5000/secrets/dfb180ad-30a6-40f8-b569-2695f937b258 -H 'Content-Type: application/json' -u testi:averystrongandlongpassword
+{"id": "dfb180ad-30a6-40f8-b569-2695f937b258", "slug": "viesti", "user": "testi"}
 ```
 Most of the security testing involved pinging the endpoints with cURL and checking that everything works correctly.
 
@@ -50,6 +58,11 @@ Most of the security testing involved pinging the endpoints with cURL and checki
 Since this application is a simple experiment, it relies on HTTP basic authentication. It should probably be replaced with something more secure if the program was to be deployed into production. HTTP Basic Auth would suffice if all passwords were strong but public APIs should work with keys that are easily changed and they should limit access to resources. Simple username:password authentication provides access to all resources without any limits.
 
 One very secure way to harden the authentication is using JWT, which was studied for this project but since it doesn't integrate well with Flask-RESTful - but rather with vanilla Flask - it was not used here.
+
+The program is only designed to run locally so there is no proxy or anything in front of it. This means CORS and CSRF protection cannot be implemented easily.
+Also HTTPS could be implemented, with Let's Encrypt for instance, if the program was running on a server with a public domain. However, Flask-RESTful supports
+CORS out of the box and those settings have not been tampered with. Locally CORS isn't that important but other applications running on a different port cannot
+access the REST API. For example if there was a React frontend running on port 8080, it would need to be included in the CORS headers.
 
 ## Running the program
 Make sure the latest version of the program has been cloned.
