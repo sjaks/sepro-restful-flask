@@ -30,6 +30,11 @@ UUID4 is used as the identifier format as such IDs are difficult to guess. Incre
 
 The other security consideration is the database and connectivity with it. By using SQLAlchemy, database models are enforced and the data is then inherintly validated. Such ORM library also helps in protection against SQL injections since actual SQL query strings are not constructed in this project itself. This leaves minimizes the chances of injection vulnerabilities to be present.
 
+Since the project uses password authentication and passwords are stored in a database,
+they need to be hashed. SHA-256 from `passlib` is used in this project as it suffices
+for password hashing at the moment. The library's password verification method is also
+used. The hashes are different even if the same password is used. This is because `passlib` uses a random salt for the hashes.
+
 ## Testing
 The creation of secrets can be tested with cURL, for example.
 ```
