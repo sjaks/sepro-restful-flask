@@ -7,6 +7,7 @@ class Secret(db.Model):
 
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     slug = db.Column(db.String(255), nullable=False)
+    user = db.Column(db.String(32), nullable=False)
 
     def __repr__(self):
         return f'<Secret {self.slug}>'

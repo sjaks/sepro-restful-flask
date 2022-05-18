@@ -18,4 +18,4 @@ class UserResource(Resource):
         db.session.add(user)
         db.session.commit()
         
-        return {'username': username}
+        return {'username': username[0]}
